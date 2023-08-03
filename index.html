@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Calculator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .calculator {
+            background-color: #333;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            width: 320px;
+        }
+
+        .display {
+            font-size: 36px;
+            color: #fff;
+            text-align: right;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .answer-board {
+            font-size: 16px;
+            color: #ddd;
+            text-align: right;
+            padding: 10px;
+            background-color: #444;
+            border-radius: 4px;
+            overflow-wrap: break-word;
+            min-height: 60px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-gap: 10px;
+        }
+
+        .button {
+            font-size: 24px;
+            padding: 16px;
+            text-align: center;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .button:hover {
+            background-color: #555;
+        }
+
+        .button:active {
+            background-color: #222;
+        }
+
+        .button.operator {
+            background-color: #f0e6ff;
+            color: #333;
+        }
+
+        .button.operator:hover {
+            background-color: #eadbff;
+        }
+
+        .button.operator:active {
+            background-color: #d6c5ff;
+        }
+
+        .button.equal {
+            background-color: #3cb371;
+        }
+
+        .button.equal:hover {
+            background-color: #2e8b57;
+        }
+
+        .button.equal:active {
+            background-color: #228b22;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 480px) {
+            .calculator {
+                width: 100%;
+                max-width: 320px;
+            }
+
+            .display {
+                font-size: 24px;
+            }
+
+            .button {
+                font-size: 20px;
+                padding: 12px;
+            }
+
+            .answer-board {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="calculator">
+        <div class="answer-board" id="answerBoard"></div>
+        <div class="display" id="display">0</div>
+        <div class="buttons">
+            <div class="button operator" onclick="clearDisplay()">C</div>
+            <div class="button operator" onclick="appendToDisplay('/')">/</div>
+            <div class="button operator" onclick="appendToDisplay('*')">*</div>
+            <div class="button" onclick="appendToDisplay('7')">7</div>
+            <div class="button" onclick="appendToDisplay('8')">8</div>
+            <div class="button" onclick="appendToDisplay('9')">9</div>
+            <div class="button operator" onclick="appendToDisplay('-')">-</div>
+            <div class="button" onclick="appendToDisplay('4')">4</div>
+            <div class="button" onclick="appendToDisplay('5')">5</div>
+            <div class="button" onclick="appendToDisplay('6')">6</div>
+            <div class="button operator" onclick="appendToDisplay('+')">+</div>
+            <div class="button" onclick="appendToDisplay('1')">1</div>
+            <div class="button" onclick="appendToDisplay('2')">2</div>
+            <div class="button" onclick="appendToDisplay('3')">3</div>
+            <div class="button" onclick="appendToDisplay('0')">0</div>
+            <div class="button" onclick="appendToDisplay('.')">.</div>
+            <div class="button equal" onclick="calculate()">=</div>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let answerBoard = document.getElementById('answerBoard');
+        let expression = '';
+        let answerHistory = [];
+
+        function appendToDisplay(value) {
+            if (expression === 'Error') {
+                clearDisplay();
+            }
+            expression += value;
+            display.textContent = expression;
+        }
+
+        function calculate() {
+            try {
+                let result = eval(expression);
+                expression = result.toString();
+                display.textContent = expression;
+                answerHistory.push(expression);
+                updateAnswerBoard();
+            } catch (error) {
+                expression = 'Error';
+                display.textContent = expression;
+            }
+        }
+
+        function clearDisplay() {
+            expression = '';
+            display.textContent = '0';
+        }
+
+        function updateAnswerBoard() {
+            answerBoard.innerHTML = answerHistory.map((item, index) => `<div>${index + 1}. ${item} = ${eval(item)}</div>`).join('');
+        }
+
+        document.addEventListener('keydown', function (event) {
+            const key = event.key;
+            if (/\d|[\+\-\*\/\.]|Enter/.test(key)) {
+                event.preventDefault();
+                if (key === 'Enter') {
+                    keyAction('=');
+                } else {
+                    keyAction(key);
+                }
+            }
+        });
+
+        function keyAction(key) {
+            switch (key) {
+                case 'C':
+                    clearDisplay();
+                    break;
+                case '=':
+                    calculate();
+                    break;
+                default:
+                    appendToDisplay(key);
+                    break;
+            }
+        }
+    </script>
+</body>
+
+</html>
