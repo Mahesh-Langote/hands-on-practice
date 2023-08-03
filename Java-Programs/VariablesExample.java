@@ -4,6 +4,7 @@ public class VariablesExample {
         double decimal = 5.5;
         char letter = 'A';
         String text = "Java";
+        String name ="Mahesh";
         System.out.println(num + " " + decimal + " " + letter + " " + text);
     }
 }
